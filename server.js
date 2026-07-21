@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv");
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -11,8 +11,19 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public"))); // Serve frontend
 
-app.get("/api/hit-5-api", async (req, res) => {
-  res.status(200).json({ message: "hello world" });
+app.get("/api/test", async (req, res) => {
+  res.json({ message: "working" });
+});
+
+app.get("/api/micro-vs-macro", async (req, res) => {
+  function consoleToTerminal(place) {
+    console.log(`printed from ${place}`);
+  }
+  setTimeout(() => consoleToTerminal("SetTimeout"), 0);
+  Promise.resolve().then(() => consoleToTerminal("Promise"));
+  process.nextTick(() => consoleToTerminal("Process next tick"));
+
+  res.json("Check terminal for output");
 });
 
 app.listen(port, () => {

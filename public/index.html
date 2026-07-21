@@ -11,7 +11,76 @@
     />
   </head>
   <body>
-    <div class="container"></div>
+    <div class="container">
+      <div class="task-container">
+        <h1>TasK 1: Test 5 APIs call sequntial and parallel</h1>
+        <div class="time-details">
+          <div>
+            <p id="time-seq">Time taken: 00</p>
+            <button id="fetch-seq-btn">Fetch sequential</button>
+          </div>
+          <div>
+            <p id="time-parallel">Time taken: 00</p>
+            <button id="fetch-parallel-btn">Fetch parallel</button>
+          </div>
+        </div>
+        <p>
+          When to Use Promise.all:- We can use Promise.all when all the request
+          are independent and there is no rate limiting.
+        </p>
+        <p>
+          When to Use for..of:- When upcoming requuest is dependent on the
+          previous api response. Also if there is some rate limiting added on
+          the server.
+        </p>
+      </div>
+      <div class="task-container">
+        <h1>TasK 2: Promise with .then and asyn await</h1>
+        <p>
+          Fucntion written in script.js file with console.log(). Output will be
+          visible on browser's console. Click the respected button for the
+          output
+        </p>
+        <div>
+          <button id="then-btn">Click for .then</button>
+          <button id="async-await-btn">Click for async await</button>
+        </div>
+      </div>
+      <div class="task-container">
+        <h1>TasK 3: Test negative number promise using .then and asyn await</h1>
+        <p>
+          Fucntion written in script.js file with console.log(). Output will be
+          visible on browser's console. Click the respected button for the
+          output
+        </p>
+        <div>
+          <button id="test-negative-promise-btn">Click for .then</button>
+          <button id="test-negative-async-await-btn">
+            Click for async await
+          </button>
+        </div>
+      </div>
+      <div class="task-container">
+        <h1>TasK 4: Promise.allSettle api</h1>
+        <p>
+          Fucntion written in script.js file with console.log(). Output will be
+          visible on browser's console. Click the button for the output
+        </p>
+        <div>
+          <button id="promise-all-settle-btn">All settle Promise API</button>
+        </div>
+      </div>
+      <div class="task-container">
+        <h1>TasK 5: Promise vs set timeout vs process.nextTick</h1>
+        <p>
+          Fucntion written in script.js file with console.log(). Output will be
+          visible on server's console. Click the button for the output
+        </p>
+        <div>
+          <button id="promise-setTimeout-process-nextTick">Comparison</button>
+        </div>
+      </div>
+    </div>
     <script src="script.js"></script>
   </body>
 </html>
