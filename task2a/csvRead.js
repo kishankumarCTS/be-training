@@ -1,10 +1,13 @@
 const fs = require("fs");
+const path = require("path");
 const readline = require("readline");
 const [, , filePath, rawFilter] = process.argv;
 const filter = rawFilter.split("=")[0];
 const filterValue = rawFilter.split("=")[1];
 
-const csvFileStream = fs.createReadStream(filePath);
+const resolvedPath = path.resolve(filePath);
+console.log(resolvedPath);
+const csvFileStream = fs.createReadStream(resolvedPath);
 
 const rl = readline.createInterface({
   input: csvFileStream,
@@ -38,7 +41,8 @@ rl.on("close", () => {
     (row) => row[filterIndex] === filterValue,
   );
 
-  const outputStream = fs.createWriteStream("filtered.csv");
+  const outputFilePath = path.join(__dirname, "filtered.csv");
+  const outputStream = fs.createWriteStream(outputFilePath);
 
   outputStream.write(csvHeaders.join(",") + "\n");
 

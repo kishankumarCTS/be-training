@@ -9,8 +9,6 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "csv": "node csvRead.js",
-    "text": "node txtRead.js",
     "path:methods": "node pathMethodsDemo.js"
   },
   "dependencies": {
