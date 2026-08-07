@@ -1,6 +1,7 @@
 const express = require("express");
 const notesRouter = express.Router();
 const { randomUUID } = require("crypto");
+const AppError = require("../utils/utils");
 
 let notes = [];
 let nextId = 1;
@@ -67,13 +68,6 @@ notesRouter.delete("/:id", (req, res) => {
   notes = notes.filter((note) => note.id !== noteId);
   res.json({
     message: "Note deleted.",
-  });
-});
-
-notesRouter.use((err, req, res, next) => {
-  res.status(err.statusCode || 500).json({
-    status: err.status || "error",
-    message: err.message || "Something went wrong",
   });
 });
 
