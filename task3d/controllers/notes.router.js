@@ -1,19 +1,28 @@
 const express = require("express");
-const AppError = require("./utils/utils");
-const app = express();
-app.use(express.json());
+const notesRouter = express.Router();
+const { randomUUID } = require("crypto");
 
-const PORT = 3000;
-const HOST_NAME = "localhost";
-const BASE_URL = `http://${HOST_NAME}:${PORT}`;
 let notes = [];
 let nextId = 1;
 
-app.get("/notes", (req, res) => {
+notesRouter.use((req, res, next) => {
+  const pathName = req.path;
+  const method = req.method;
+  const time = new Date().toLocaleString();
+  console.log({ pathName, method, time });
+  return next();
+});
+
+notesRouter.use((req, res, next) => {
+  res.set("X-Request-Id", randomUUID());
+  return next();
+});
+
+notesRouter.get("/", (req, res) => {
   res.send(notes);
 });
 
-app.get("/notes/:id", (req, res, next) => {
+notesRouter.get("/:id", (req, res, next) => {
   const noteId = Number(req.params.id);
   const note = notes.filter((note) => note.id === noteId)[0];
   if (!note) {
@@ -22,7 +31,7 @@ app.get("/notes/:id", (req, res, next) => {
   res.json(note);
 });
 
-app.put("/notes/:id", (req, res, next) => {
+notesRouter.put("/:id", (req, res, next) => {
   const noteId = Number(req.params.id);
   const noteIndex = notes.findIndex((note) => note.id === noteId);
 
@@ -43,7 +52,7 @@ app.put("/notes/:id", (req, res, next) => {
   });
 });
 
-app.post("/notes", (req, res) => {
+notesRouter.post("/", (req, res) => {
   const body = req.body;
   const newNote = {
     id: nextId++,
@@ -53,21 +62,19 @@ app.post("/notes", (req, res) => {
   res.json(newNote);
 });
 
-app.delete("/notes/:id", (req, res) => {
+notesRouter.delete("/:id", (req, res) => {
   const noteId = Number(req.params.id);
-  notes = notes.filter((note) => notes.id !== noteId);
+  notes = notes.filter((note) => note.id !== noteId);
   res.json({
     message: "Note deleted.",
   });
 });
 
-app.use((err, req, res, next) => {
+notesRouter.use((err, req, res, next) => {
   res.status(err.statusCode || 500).json({
     status: err.status || "error",
     message: err.message || "Something went wrong",
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
+module.exports = notesRouter;
