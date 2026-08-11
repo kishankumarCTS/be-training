@@ -23,6 +23,14 @@ notesRouter.get("/", (req, res) => {
   res.send(notes);
 });
 
+notesRouter.get("/intentional-error", async (req, res, next) => {
+  try {
+    throw new Error("Intentional error");
+  } catch (err) {
+    next(err);
+  }
+});
+
 notesRouter.get("/:id", (req, res, next) => {
   const noteId = Number(req.params.id);
   const note = notes.filter((note) => note.id === noteId)[0];
