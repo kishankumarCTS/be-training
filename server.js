@@ -17,7 +17,7 @@ const {
   deletePost,
   updatePost,
   getPosts,
-} = require("./task4bAnd4c/models/services.js");
+} = require("./task4b/models/services.js");
 
 const app = express();
 const port = process.env.PORT || 3000;
