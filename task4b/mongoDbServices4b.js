@@ -1,7 +1,7 @@
-const Post = require("./Posts");
+const Post = require("../databases/mongodb/models/Post");
 
 // CREATE
-async function createPost(data) {
+async function createPostMongodb(data) {
   const { postedBy, title, content } = data;
 
   try {
@@ -19,7 +19,7 @@ async function createPost(data) {
 }
 
 // GET ALL POSTS
-async function getPosts() {
+async function getPostsMongodb() {
   try {
     const posts = await Post.find().sort({ createdAt: -1 });
 
@@ -31,7 +31,7 @@ async function getPosts() {
 }
 
 // GET ONE POST
-async function getPost(id) {
+async function getPostMongodb(id) {
   try {
     const post = await Post.findById(id);
 
@@ -42,7 +42,7 @@ async function getPost(id) {
   }
 }
 
-async function updatePost(id, data) {
+async function updatePostMongodb(id, data) {
   const updates = {};
   if (data.title !== undefined) {
     updates.title = data.title;
@@ -67,7 +67,7 @@ async function updatePost(id, data) {
 }
 
 // DELETE POST
-async function deletePost(id) {
+async function deletePostMongodb(id) {
   try {
     const post = await Post.findByIdAndDelete(id);
     return post;
@@ -77,10 +77,21 @@ async function deletePost(id) {
   }
 }
 
+async function deleteAllPostsMongodb() {
+  try {
+    const post = await Post.deleteMany({});
+    return post;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 module.exports = {
-  createPost,
-  getPosts,
-  getPost,
-  updatePost,
-  deletePost,
+  createPostMongodb,
+  getPostsMongodb,
+  getPostMongodb,
+  updatePostMongodb,
+  deletePostMongodb,
+  deleteAllPostsMongodb,
 };

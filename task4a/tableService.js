@@ -1,73 +1,4 @@
-const pool = require("./pool.js");
-
-async function createTable() {
-  try {
-    // Users table
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        username VARCHAR(50) NOT NULL UNIQUE,
-        email VARCHAR(100) NOT NULL UNIQUE,
-        password_hash TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    // Posts table
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS posts (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER NOT NULL,
-        title VARCHAR(200) NOT NULL,
-        content TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-        CONSTRAINT fk_posts_user
-          FOREIGN KEY (user_id)
-          REFERENCES users(id)
-          ON DELETE CASCADE
-      )
-    `);
-
-    // Comments table
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS comments (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER NOT NULL,
-        post_id INTEGER NOT NULL,
-        content TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-        CONSTRAINT fk_comments_user
-          FOREIGN KEY (user_id)
-          REFERENCES users(id)
-          ON DELETE CASCADE,
-
-        CONSTRAINT fk_comments_post
-          FOREIGN KEY (post_id)
-          REFERENCES posts(id)
-          ON DELETE CASCADE
-      )
-    `);
-
-    console.log("Blog database tables created successfully");
-  } catch (error) {
-    console.error("Database error:", error);
-  }
-}
-
-async function insertUser(data) {
-  const { username, email, password } = data;
-  try {
-    const user = await pool.query(
-      `INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id, username, email, created_at`,
-      [username, email, password],
-    );
-    return user.rows[0];
-  } catch (error) {
-    console.log(error);
-  }
-}
+const pool = require("../databases/pg/pool");
 
 async function createPost(data) {
   const { title, content, user_id } = data;
@@ -103,10 +34,18 @@ async function addComment(data) {
   }
 }
 
+async function getUserWithPostId(post_id) {
+  const data = await pool.query(
+    `SELECT users.id AS user_id, users.username, users.email, posts.id AS post_id FROM posts JOIN users ON posts.user_id = users.id WHERE posts.id = $1;
+    `,
+    [post_id],
+  );
+  return data.rows;
+}
+
 module.exports = {
-  createTable,
-  insertUser,
   createPost,
   getMyPosts,
   addComment,
+  getUserWithPostId,
 };

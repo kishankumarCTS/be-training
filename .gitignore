@@ -15,3 +15,9 @@ pnpm-debug.log*
 .idea/
 
 .DS_Store
+/generated/prisma
+.windsurf
+.claude
+.agents
+
+/generated/prisma
