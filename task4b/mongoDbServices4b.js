@@ -1,4 +1,5 @@
 const Post = require("../databases/mongodb/models/Post");
+const User = require("../databases/mongodb/models/User");
 
 // CREATE
 async function createPostMongodb(data) {
@@ -87,6 +88,24 @@ async function deleteAllPostsMongodb() {
   }
 }
 
+async function getUsersMongodb() {
+  try {
+    console.log("working");
+    const users = await User.find();
+    return users;
+  } catch (error) {}
+}
+
+async function createUserMongodb(data) {
+  const createdUser = await User.create({
+    email: data.email,
+    username: data.username,
+    password: data.password,
+  });
+
+  return { id: createdUser.id };
+}
+
 module.exports = {
   createPostMongodb,
   getPostsMongodb,
@@ -94,4 +113,6 @@ module.exports = {
   updatePostMongodb,
   deletePostMongodb,
   deleteAllPostsMongodb,
+  getUsersMongodb,
+  createUserMongodb,
 };

@@ -113,11 +113,11 @@ async function getPostsWithAuthorNameAndCommentCount(user_id) {
 }
 
 async function updatePostSQL(post_id, title) {
-  const [result] = await pool.execute(
-    `UPDATE posts SET title=$1 WHERE post_id=$2`,
+  const result = await pool.query(
+    `UPDATE posts SET title=$1 WHERE id=$2 RETURNING id, title`,
     [title, post_id],
   );
-  return result;
+  return result.rows[0];
 }
 
 module.exports = {

@@ -10,9 +10,9 @@ async function getUsersWith2AndMorePost(posts) {
 
 async function getAllPostsWithAuthorName() {
   const posts = await pool.query(
-    `SELECT posts.post_id, posts.title, posts.content, users.username as author_name FROM posts JOIN users ON users.id = posts.user_id`,
+    `SELECT posts.id, posts.title, posts.content, users.username as author_name FROM posts JOIN users ON users.id = posts.user_id`,
   );
-  return posts;
+  return posts.rows;
 }
 
 module.exports = {

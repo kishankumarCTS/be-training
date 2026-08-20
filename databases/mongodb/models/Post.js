@@ -29,10 +29,22 @@ const postSchema = new mongoose.Schema(
   },
 );
 
-// pre middleware for task 4g
-postSchema.pre("save", function (next) {
-  this.slug = this.title.toLowerCase().replace(/\s+/g, "-");
-  next();
+postSchema.pre("validate", async function () {
+  if (!this.isModified("title")) {
+    return;
+  }
+
+  const baseSlug = this.title.toLowerCase().trim().replace(/\s+/g, "-");
+
+  let slug = baseSlug;
+  let counter = 1;
+
+  while (await mongoose.models.Post.exists({ slug })) {
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+
+  this.slug = slug;
 });
 
 module.exports = mongoose.model("Post", postSchema);
