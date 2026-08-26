@@ -2,7 +2,9 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const mongoose = require("mongoose");
+const { postRouter } = require("./modules/post/post.route");
+const { userRouter } = require("./modules/users/user.route");
+const { AppError, ERROR_CODES } = require("./utils/errors");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -16,164 +18,28 @@ app.get("/api/hit-5-api", async (req, res) => {
   res.status(200).json({ message: "hello world" });
 });
 
-// ====================== Task 4a START ========================
-const {
-  createTable,
-  createUser,
-  createPost,
-  getPostsWithAuthorNameAndCommentCount,
-  updatePostSQL,
-} = require("./task4a/task4aServices.js");
+app.use("/api/posts", postRouter);
+app.use("/api/users", userRouter);
 
-app.post("/api/create-tables", async (req, res) => {
-  await createTable();
-  res.send("Created tables");
+app.use((req, res, next) => {
+  next(
+    new AppError(
+      ERROR_CODES.NOT_FOUND,
+      `Route ${req.method} ${req.originalUrl} not found`,
+      404,
+    ),
+  );
 });
 
-app.post("/api/create-user", async (req, res) => {
-  const body = req.body;
-  const user = await createUser(body);
-  res.json(user);
-});
-
-app.post("/api/create-post", async (req, res) => {
-  const body = req.body;
-  const post = await createPost(body);
-  res.json(post);
-});
-
-app.get("/api/get-my-posts/:id", async (req, res) => {
-  const { id } = req.params;
-  const posts = await getPostsWithAuthorNameAndCommentCount(id);
-  res.json(posts);
-});
-
-app.patch("/api/update-post/:post_id", async (req, res) => {
-  const { post_id } = req.params;
-  const body = req.body;
-  const post = await updatePostSQL(post_id, body.title);
-  res.json(post);
-});
-
-// =====================  Task 4a END ==========================
-
-// =====================  Task 4b START ========================
-
-const {
-  createPostMongodb,
-  getPostsMongodb,
-  getPostMongodb,
-  updatePostMongodb,
-  deletePostMongodb,
-  deleteAllPostsMongodb,
-  getUsersMongodb,
-  createUserMongodb,
-} = require("./task4b/mongoDbServices4b.js");
-
-mongoose
-  .connect("mongodb://localhost:27017/myblog")
-  .then(console.log("MongoDB connected"))
-  .catch((err) => console.error(err));
-
-app.post("/api/4b/create-post", async (req, res) => {
-  const { postedBy, content, title } = req.body;
-  const post = await createPostMongodb({ postedBy, content, title });
-  res.json(post);
-});
-
-app.get("/api/4b/get-posts", async (req, res) => {
-  const posts = await getPostsMongodb();
-  res.json(posts);
-});
-
-app.get("/api/4b/get-post/:id", async (req, res) => {
-  const { id } = req.params;
-  const post = await getPost(id);
-  res.json(post || [{}]);
-});
-
-app.patch("/api/4b/update-post/:id", async (req, res) => {
-  const { id } = req.params;
-  const data = req.body;
-  const updatedPost = await updatePost(id, data);
-  res.json(updatedPost);
-});
-
-app.delete("/api/4b/delete-post/:id", async (req, res) => {
-  const { id } = req.params;
-  await deletePost(id);
-  res.json({ message: "Post deleted" });
-});
-
-app.delete("/api/4g/delete-all", async (req, res) => {
-  const posts = await deleteAllPosts();
-  res.json({ message: "All posts deleted." });
-});
-
-app.get("/api/mongodb/get-users", async (req, res) => {
-  const users = await getUsersMongodb();
-  res.json(users);
-});
-
-app.post("/api/mongodb/create-user", async (req, res) => {
-  const body = req.body;
-  const user = await createUserMongodb(body);
-  res.json(user);
-});
-
-// =====================  Task 4b END  =========================
-
-// =====================  Task 4c START  =======================
-
-const {
-  getUsersWith2AndMorePost,
-  getAllPostsWithAuthorName,
-} = require("./task4c/task4cServices.js");
-
-app.get("/api/posts/all-posts", async (req, res) => {
-  const posts = await getAllPostsWithAuthorName();
-  res.json(posts);
-});
-
-app.get("/api/users/with-min-posts/:posts", async (req, res) => {
-  const { posts } = req.params;
-  const data = await getUsersWith2AndMorePost(posts);
-  res.json(data);
-});
-
-// =====================  Task 4c END  =========================
-
-// =====================  Task 4d START  =======================
-
-const { createUserPostTransaction } = require("./task4d/task4dServices.js");
-app.post("/api/transaction", async (req, res) => {
-  const message = await createUserPostTransaction();
-  res.send({ message });
-});
-
-// =====================  Task 4d END  =========================
-
-// =====================  Task 4e START  =======================
-
-const { getUserWithPosts } = require("./task4e/task4eServices.js");
-
-app.get("/api/get-user-with-post/:user_id", async (req, res) => {
-  const { user_id } = req.params;
-  const user = await getUserWithPosts(user_id);
-  res.json(user);
-});
-
-// =====================  Task 4e END  =========================
-
-// =====================  Task 4f START  =======================
-
-const {
-  fetchAllPostsWithAutorNamePrisma,
-} = require("./task4f/task4fServices.js");
-
-app.get("/api/prisma/get-all-posts", async (req, res) => {
-  const posts = await fetchAllPostsWithAutorNamePrisma();
-  res.json(posts);
+// Global error handler
+app.use((err, req, res, next) => {
+  return res.status(err.statusCode || 500).json({
+    error: {
+      code: err.code || ERROR_CODES.INTERNAL_SERVER_ERROR,
+      message: err.message || "Internal server error",
+      details: err.details || {},
+    },
+  });
 });
 
 app.listen(port, () => {

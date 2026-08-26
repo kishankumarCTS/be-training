@@ -8,36 +8,36 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
   username  String
   password  String
-  createdAt DateTime  @default(now())
+  createdAt DateTime @default(now())
 
-  posts     Post[]
-  comments  Comment[]
+  posts    Post[]
+  comments Comment[]
 }
 
 model Post {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   title     String
   content   String
-  createdAt DateTime  @default(now())
+  createdAt DateTime @default(now())
 
-  userId    Int
-  user      User      @relation(fields: [userId], references: [id])
+  user_id Int
+  user    User @relation(fields: [user_id], references: [id])
 
-  comments  Comment[]
+  comments Comment[]
 }
 
 model Comment {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   content   String
-  createdAt DateTime  @default(now())
+  createdAt DateTime @default(now())
 
-  userId    Int
-  postId    Int
+  userId Int
+  postId Int
 
-  user      User      @relation(fields: [userId], references: [id])
-  post      Post      @relation(fields: [postId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
 }
