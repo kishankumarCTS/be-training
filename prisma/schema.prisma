@@ -16,6 +16,7 @@ model User {
 
   posts    Post[]
   comments Comment[]
+  refreshToken RefreshToken[]
 }
 
 model Post {
@@ -41,3 +42,18 @@ model Comment {
   user User @relation(fields: [userId], references: [id])
   post Post @relation(fields: [postId], references: [id])
 }
+
+
+model RefreshToken {
+  id                 Int      @id @default(autoincrement())
+  user_id            Int
+  user               User @relation(fields: [user_id], references: [id])
+
+  refreshToken       String
+  sessionId          String
+
+  expireAt           DateTime
+  createdAt          DateTime @default(now())
+  revokedAt          DateTime?
+}
+

@@ -1,4 +1,4 @@
-const { prisma } = require("../../prisma/prisma-clinet");
+const { prisma } = require("../../prisma/prisma-client");
 
 async function createPost(data) {
   const post = await prisma.post.create({
