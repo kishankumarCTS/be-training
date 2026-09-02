@@ -40,7 +40,16 @@ function verifyToken(req, res, next) {
     req.user = decoded; // Attach user payload to request
     next();
   } catch (error) {
-    res.status(403).json({ message: "Invalid or Expired Token" });
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({
+        message: "Token has expired",
+        code: "TOKEN_EXPIRED",
+      });
+    }
+
+    return res.status(401).json({
+      message: "Invalid token",
+    });
   }
 }
 

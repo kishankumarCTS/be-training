@@ -5,6 +5,7 @@ const path = require("path");
 const { postRouter } = require("./modules/post/post.route");
 const { userRouter } = require("./modules/users/user.route");
 const { AppError, ERROR_CODES } = require("./utils/errors");
+const { verifyToken } = require("./utils/auth.utils");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -12,14 +13,12 @@ const port = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public"))); // Serve frontend
-
-app.get("/api/hit-5-api", async (req, res) => {
-  res.status(200).json({ message: "hello world" });
-});
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/api/posts", postRouter);
 app.use("/api/users", userRouter);
+
+app.use(verifyToken);
 
 app.use((req, res, next) => {
   next(

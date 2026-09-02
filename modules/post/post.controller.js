@@ -1,3 +1,4 @@
+const { prisma } = require("../../prisma/prisma-client");
 const { ERROR_CODES, AppError } = require("../../utils/errors");
 const { createPostSchema, updatePostSchema } = require("./post.schema");
 const { createPost, updatePost, getPosts } = require("./post.service");
@@ -80,8 +81,26 @@ async function get(req, res) {
   }
 }
 
+async function deletePost(req, res, next) {
+  const post_id = req.param;
+  try {
+    await prisma.post.delete({
+      where: {
+        id: post_id,
+      },
+    });
+
+    return res.status(200).json({
+      message: "Post deleted.",
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   create,
   update,
   get,
+  deletePost,
 };
