@@ -65,7 +65,7 @@ app.post("/notes", (req, res) => {
     note: body.note,
   };
   notes.push(newNote);
-  res.json(newNote);
+  res.status(201).json(newNote);
 });
 
 app.delete("/notes/:id", (req, res) => {
