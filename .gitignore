@@ -13,5 +13,8 @@ pnpm-debug.log*
 
 .vscode/
 .idea/
+.windsurf/
+
+/generated
 
 .DS_Store
