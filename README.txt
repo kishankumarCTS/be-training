@@ -8,8 +8,8 @@
     CLI command: "node .\task3band3c\noteExpress.js"
     BE server will be started on port 3000.
     User postman JSON file for testing API end points
-# Task 3d
+# Task 3d 3e 3f ( Clubbed tasks in one )
     Make sure that you are in root directory of the project.
-    CLI command: "node .\task3d\app.js"
+    CLI command: "node .\task3d3e3f\app.js"
     BE server will be started on port 3000.
     User postman JSON file for testing API end points
